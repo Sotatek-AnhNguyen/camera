@@ -16,14 +16,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.nguye.cameravo.Camera.CameraManager;
 import com.example.nguye.cameravo.Camera.CameraPreview;
-import com.example.nguye.cameravo.Activity.MainActivity;
 import com.example.nguye.cameravo.R;
 
+import java.io.File;
 import java.io.IOException;
 
 public class FragmentRecorder extends Fragment implements View.OnClickListener {
@@ -32,12 +31,14 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
     private CameraPreview mCameraPreviewR;
     private ImageView mBTRecorder;
     private boolean isRecorder;
+    private boolean isPauseRecorder;
     private FrameLayout frameLayout;
     private VideoView mVVVideoRecorder;
     private String path;
     private ImageView mImvPauseRecorder;
     private ImageView mImvSaveVideo;
     private ImageView mImvCancelVideo;
+    private ImageView mImvSwitchCamera;
 
     @Nullable
     @Override
@@ -51,27 +52,31 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         isRecorder = false;
+        isPauseRecorder = false;
         mBTRecorder = view.findViewById(R.id.btRecorder);
-        mCameraR = CameraManager.getCameraInstance();
-        mCameraPreviewR = new CameraPreview(getActivity().getApplicationContext(), mCameraR);
         frameLayout = view.findViewById(R.id.camRecorderPreview);
-        frameLayout.addView(mCameraPreviewR);
+
         mVVVideoRecorder = view.findViewById(R.id.vvVideoRecorder);
         mImvPauseRecorder = view.findViewById(R.id.imvPauseRecorder);
         mImvSaveVideo = view.findViewById(R.id.imvSaveVideo);
         mImvCancelVideo = view.findViewById(R.id.imvCancelVideo);
+        mImvSwitchCamera = view.findViewById(R.id.imvSwitchCamera);
         mBTRecorder.setOnClickListener(this);
+        mImvPauseRecorder.setOnClickListener(this);
+        mImvSaveVideo.setOnClickListener(this);
+        mImvCancelVideo.setOnClickListener(this);
+        mImvSwitchCamera.setOnClickListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private boolean prepareVideoRecorder() {
 
-        mMediaRecorder = new MediaRecorder();
         mCameraR.unlock();
         mMediaRecorder.setCamera(mCameraR);
 
@@ -96,17 +101,33 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-       // releaseMediaRecorder();
-        mCameraR.release();
-        mCameraR = null;
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            if (mCameraR == null){
+                mCameraR = CameraManager.getCameraInstance();
+                mMediaRecorder = new MediaRecorder();
+                mCameraPreviewR = new CameraPreview(getActivity().getApplicationContext(), mCameraR);
+                frameLayout.addView(mCameraPreviewR);
+            }
+        }else {
+            if (mMediaRecorder != null){
+                mMediaRecorder.reset();
+                mMediaRecorder.release();
+                mMediaRecorder = null;
+                mCameraR.lock();
+            }
 
+            if (mCameraR != null) {
+                mCameraR.release();
+                mCameraR = null;
+            }
+        }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -121,6 +142,9 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
                     releaseMediaRecorder();
                     mCameraR.lock();
                     isRecorder = false;
+                    mImvSaveVideo.setVisibility(View.VISIBLE);
+                    mImvCancelVideo.setVisibility(View.VISIBLE);
+                    mImvPauseRecorder.setVisibility(View.GONE);
                     mVVVideoRecorder.setVisibility(View.VISIBLE);
                     mVVVideoRecorder.setMediaController(new MediaController(getContext()));
                     mVVVideoRecorder.setVideoURI(Uri.parse(path));
@@ -128,6 +152,8 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
                 }else {
                     if (prepareVideoRecorder()){
                         mMediaRecorder.start();
+                        mBTRecorder.setImageResource(R.drawable.bgcapturecancel);
+                        mImvPauseRecorder.setVisibility(View.VISIBLE);
                         isRecorder = true;
 
                     }else {
@@ -136,11 +162,44 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.imvPauseRecorder:
-
+                if (isRecorder){
+                    if (isPauseRecorder){
+                        mMediaRecorder.resume();
+                        mImvPauseRecorder.setImageResource(R.drawable.icsliderpointer);
+                        isPauseRecorder = false;
+                    }else {
+                        mMediaRecorder.pause();
+                        mImvPauseRecorder.setImageResource(R.drawable.icplay);
+                        isPauseRecorder = true;
+                    }
+                }
                 break;
             case R.id.imvSaveVideo:
+                mVVVideoRecorder.setVisibility(View.GONE);
+                mImvSaveVideo.setVisibility(View.GONE);
+                mImvCancelVideo.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.VISIBLE);
+                mBTRecorder.setVisibility(View.VISIBLE);
+                mImvPauseRecorder.setVisibility(View.GONE);
+                mBTRecorder.setImageResource(R.drawable.bgcapturevideo);
                 break;
             case R.id.imvCancelVideo:
+                File file = new File(path);
+                file.delete();
+                mVVVideoRecorder.setVisibility(View.GONE);
+                mImvSaveVideo.setVisibility(View.GONE);
+                mImvCancelVideo.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.VISIBLE);
+                mBTRecorder.setVisibility(View.VISIBLE);
+                mImvPauseRecorder.setVisibility(View.GONE);
+                mBTRecorder.setImageResource(R.drawable.bgcapturevideo);
+                break;
+            case R.id.imvSwitchCamera:
+                if (mCameraR != null){
+                    mCameraR.stopPreview();
+                    mCameraR.release();
+                }
+
                 break;
         }
     }
@@ -151,13 +210,6 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
             mMediaRecorder.release();
             mMediaRecorder = null;
             mCameraR.lock();
-        }
-    }
-
-    private void releaseCamera(){
-        if (mCameraR != null){
-            mCameraR.release();
-            mCameraR = null;
         }
     }
 }

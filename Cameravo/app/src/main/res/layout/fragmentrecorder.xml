@@ -14,7 +14,18 @@
     <FrameLayout
         android:id="@+id/camRecorderPreview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imvSwitchCamera"
+        android:src="@drawable/icswitchcamera"
+        android:layout_width="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:layout_alignParentBottom="true"
@@ -28,6 +39,7 @@
         android:id="@+id/imvPauseRecorder"
         android:layout_toLeftOf="@id/btRecorder"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         android:layout_marginRight="15dp"
         android:src="@drawable/icsliderpointer"
         android:layout_width="60dp"
@@ -39,7 +51,7 @@
         android:visibility="gone"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -48,7 +60,7 @@
         android:src="@drawable/bgcapturecancel"
         android:layout_width="60dp"
         android:visibility="gone"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="5dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:scaleType="fitXY"

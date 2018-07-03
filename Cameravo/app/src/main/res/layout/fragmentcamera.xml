@@ -30,6 +30,7 @@
         android:id="@+id/ibtSaveImage"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/icsave"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"

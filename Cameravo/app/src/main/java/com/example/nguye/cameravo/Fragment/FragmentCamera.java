@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.nguye.cameravo.Camera.CameraManager;
@@ -34,6 +35,8 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
     private ImageView imvShowPicture;
     private ImageView ibtSaveImage;
     private ImageView ibtDeleteImage;
+    private String path;
+    private ImageView mImvSwitchCamera;
 
     @Nullable
     @Override
@@ -46,18 +49,23 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mCamera = CameraManager.getCameraInstance();
-        mPreview = new CameraPreview(getActivity().getApplicationContext(), mCamera);
         frameLayout = view.findViewById(R.id.cameraPreview);
-        frameLayout.addView(mPreview);
         mIMBCaputer = view.findViewById(R.id.btCapture);
         imvShowPicture = view.findViewById(R.id.imvShowPicture);
         ibtDeleteImage = view.findViewById(R.id.ibtDeleteImage);
         ibtSaveImage = view.findViewById(R.id.ibtSaveImage);
+        //mImvSwitchCamera = view.findViewById(R.id.imvSwitchCamera);
 
         mIMBCaputer.setOnClickListener(this);
         ibtSaveImage.setOnClickListener(this);
         ibtDeleteImage.setOnClickListener(this);
+        //mImvSwitchCamera.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
@@ -81,7 +89,7 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
                 Log.d("zz", "Error accessing file: " + e.getMessage());
             }
 
-            String path = pictureFile.getAbsolutePath();
+            path = pictureFile.getAbsolutePath();
 
             if (path != null){
                 Glide.with(getActivity()).load(path).transform(new RotateImage(getContext(), 90))
@@ -110,6 +118,8 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
                 mIMBCaputer.setVisibility(View.VISIBLE);
                 break;
             case R.id.ibtDeleteImage:
+                File file = new File(path);
+                file.delete();
                 imvShowPicture.setVisibility(View.GONE);
                 ibtSaveImage.setVisibility(View.GONE);
                 ibtDeleteImage.setVisibility(View.GONE);
@@ -121,6 +131,26 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        mCamera.release();
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            if (mCamera == null){
+                mCamera = CameraManager.getCameraInstance();
+                mPreview = new CameraPreview(getActivity().getApplicationContext(), mCamera);
+                frameLayout.addView(mPreview);
+            }
+
+        }else {
+            if (mCamera != null) {
+                mCamera.release();
+                mCamera = null;
+                Toast.makeText(getContext(), "release camera", Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 }

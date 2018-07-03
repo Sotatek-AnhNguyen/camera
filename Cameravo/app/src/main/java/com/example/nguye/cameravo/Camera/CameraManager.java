@@ -1,5 +1,6 @@
 package com.example.nguye.cameravo.Camera;
 
+import android.app.Activity;
 import android.hardware.Camera;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.Surface;
 
 import java.io.File;
 import java.util.Date;
@@ -57,5 +59,35 @@ public class CameraManager {
         }
 
         return mediaFile;
+    }
+
+    public static void setCameraDisplayOrientation(Activity activity, int mCameaId, Camera camera){
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(mCameaId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int degress = 0;
+        switch (rotation){
+            case Surface.ROTATION_0:
+                degress = 0;
+                break;
+            case Surface.ROTATION_90:
+                degress =90;
+                break;
+            case Surface.ROTATION_180:
+                degress = 180;
+                break;
+            case Surface.ROTATION_270:
+                degress = 270;
+                break;
+        }
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+            result = (info.orientation + degress) % 360;
+            result = (360 - result)%360;
+        }else {
+            result = (info.orientation - degress + 360) % 360;
+        }
+
+        camera.setDisplayOrientation(result);
     }
 }
