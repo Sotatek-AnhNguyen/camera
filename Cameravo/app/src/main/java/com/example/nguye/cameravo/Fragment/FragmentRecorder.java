@@ -44,7 +44,7 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
     private ImageView mImvCancelVideo;
     private RelativeLayout mRlRecorder;
     private SeekBar mSbVideoRecorder;
-    private Handler handler = new Handler();
+    private Handler handler;
     private TextView mTvTimeRecorder;
     private boolean playMedia;
     private ArrayList<String> arrDelete;
@@ -65,6 +65,7 @@ public class FragmentRecorder extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         arrDelete = new ArrayList<>();
+        handler = new Handler();
         mBTRecorder = view.findViewById(R.id.btRecorder);
         mImvPauseRecorder = view.findViewById(R.id.imvPauseRecorder);
         mImvSwitchCamera = view.findViewById(R.id.imvSwitchCameraR);
