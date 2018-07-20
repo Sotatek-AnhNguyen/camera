@@ -44,14 +44,16 @@ public class MainActivity extends AppCompatActivity  {
     private CameraPreview mPreview;
     private FrameLayout frameLayout;
     private MediaRecorder mMediaRecorder;
-    private Camera.CameraInfo info = new Camera.CameraInfo();
-    private int currentCameraId = info.facing;
+    private Camera.CameraInfo info;
+    private int currentCameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         arrImageTabs = new ArrayList<>();
+        info = new Camera.CameraInfo();
+        currentCameraId = info.facing;
         initImageTab();
         initView();
     }
