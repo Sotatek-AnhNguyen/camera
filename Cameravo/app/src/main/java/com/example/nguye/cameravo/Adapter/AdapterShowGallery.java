@@ -1,56 +1,82 @@
 package com.example.nguye.cameravo.Adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
+import com.example.nguye.cameravo.Model.LinkImage;
 import com.example.nguye.cameravo.R;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
-public class AdapterShowGallery extends RecyclerView.Adapter<AdapterShowGallery.viewHolder> {
-    private ArrayList<String> arrDataImage;
+public class AdapterShowGallery extends BaseAdapter {
+    private ArrayList<LinkImage> arrDataImage;
     private LayoutInflater inflater;
     private Context context;
 
-    public AdapterShowGallery(ArrayList<String> arrDataImage, Context context) {
+    public AdapterShowGallery(ArrayList<LinkImage> arrDataImage, Context context) {
         this.arrDataImage = arrDataImage;
         this.context = context;
         inflater = LayoutInflater.from(context);
     }
 
     @Override
-    public viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.activityitemgallery, parent, false);
-        viewHolder viewHolder = new viewHolder(view);
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(viewHolder holder, int position) {
-        Glide.with(context).load(arrDataImage.get(position)).into(holder.mImvItemImage);
-    }
-
-    @Override
-    public int getItemCount() {
+    public int getCount() {
         return arrDataImage.size();
     }
 
-    class viewHolder extends RecyclerView.ViewHolder{
-        ImageView mImvItemImage;
-        ImageView mImvItemImage1;
-        ImageView mImvItemImage2;
-
-        public viewHolder(View itemView) {
-            super(itemView);
-            mImvItemImage = itemView.findViewById(R.id.imvItemImage);
-            mImvItemImage1 = itemView.findViewById(R.id.imvItemImage1);
-            mImvItemImage2 = itemView.findViewById(R.id.imvItemImage2);
-        }
+    @Override
+    public Object getItem(int i) {
+        return arrDataImage.get(i);
     }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
+    }
+
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        viewHolder viewHolder;
+        if (view == null){
+            viewHolder = new viewHolder();
+            view = inflater.inflate(R.layout.activityitemgallery, viewGroup, false);
+            viewHolder.mImvItemImage = view.findViewById(R.id.imvItemImage);
+            viewHolder.mImvItemClickImage = view.findViewById(R.id.imvItemClickImage);
+            viewHolder.mImvItemIsImage = view.findViewById(R.id.imvItemIsImage);
+            viewHolder.mRlBackground = view.findViewById(R.id.imvBackgroundImage);
+            view.setTag(viewHolder);
+        }else {
+            viewHolder = (AdapterShowGallery.viewHolder) view.getTag();
+        }
+
+        Glide.with(context).load(arrDataImage.get(i).getPath()).into(viewHolder.mImvItemImage);
+        if (arrDataImage.get(i).isClick()){
+            viewHolder.mImvItemClickImage.setVisibility(View.VISIBLE);
+            viewHolder.mRlBackground.setVisibility(View.VISIBLE);
+        }else {
+            viewHolder.mImvItemClickImage.setVisibility(View.GONE);
+            viewHolder.mRlBackground.setVisibility(View.GONE);
+        }
+        if (arrDataImage.get(i).isImage()){
+            viewHolder.mImvItemIsImage.setVisibility(View.GONE);
+        }else {
+            viewHolder.mImvItemIsImage.setVisibility(View.VISIBLE);
+        }
+
+        return view;
+    }
+
+    class viewHolder{
+        ImageView mImvItemImage;
+        ImageView mImvItemClickImage;
+        ImageView mImvItemIsImage;
+        ImageView mRlBackground;
+    }
+
 }

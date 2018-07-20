@@ -2,21 +2,36 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_marginBottom="20dp"
     android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/cameraPreview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
 
     <ImageView
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_width="60dp"
-        android:text="capture"
+        android:layout_width="80dp"
         android:src="@drawable/bgcapturecamera"
+        android:layout_marginBottom="10dp"
         android:id="@+id/btCapture"
-        android:layout_height="60dp" />
+        android:layout_height="80dp" />
+
+    <ImageView
+        android:id="@+id/imvSwitchCamera"
+        android:src="@drawable/icswitchcamera"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp" />
+
+    <ImageView
+        android:id="@+id/imvFlashInActive"
+        android:src="@drawable/icflashinactive"
+        android:layout_width="40dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="20dp"
+        android:layout_height="40dp" />
 
     <ImageView
         android:id="@+id/imvShowPicture"
@@ -30,20 +45,24 @@
         android:id="@+id/ibtSaveImage"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
-        android:layout_marginBottom="10dp"
+        android:background="@drawable/icsliderpointer"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="20dp"
         android:src="@drawable/icsave"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="60dp"
+        android:padding="17dp"
+        android:layout_height="60dp" />
 
     <ImageView
         android:id="@+id/ibtDeleteImage"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
         android:scaleType="fitXY"
-        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/bgcapturecancel"
-        android:layout_width="60dp"
-        android:layout_height="60dp" />
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
 
 </RelativeLayout>

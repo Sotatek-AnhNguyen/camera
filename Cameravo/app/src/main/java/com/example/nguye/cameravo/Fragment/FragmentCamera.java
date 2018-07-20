@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -28,15 +31,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FragmentCamera extends Fragment implements View.OnClickListener {
-    private Camera mCamera;
-    private CameraPreview mPreview;
-    private FrameLayout frameLayout;
     private ImageView mIMBCaputer;
     private ImageView imvShowPicture;
     private ImageView ibtSaveImage;
     private ImageView ibtDeleteImage;
     private String path;
     private ImageView mImvSwitchCamera;
+    private ImageView mImvFlashInActive;
+    private int k;
 
     @Nullable
     @Override
@@ -49,17 +51,24 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        frameLayout = view.findViewById(R.id.cameraPreview);
         mIMBCaputer = view.findViewById(R.id.btCapture);
         imvShowPicture = view.findViewById(R.id.imvShowPicture);
         ibtDeleteImage = view.findViewById(R.id.ibtDeleteImage);
         ibtSaveImage = view.findViewById(R.id.ibtSaveImage);
-        //mImvSwitchCamera = view.findViewById(R.id.imvSwitchCamera);
+        mImvSwitchCamera = view.findViewById(R.id.imvSwitchCamera);
+        mImvFlashInActive = view.findViewById(R.id.imvFlashInActive);
 
+        k =0;
         mIMBCaputer.setOnClickListener(this);
         ibtSaveImage.setOnClickListener(this);
         ibtDeleteImage.setOnClickListener(this);
-        //mImvSwitchCamera.setOnClickListener(this);
+        mImvSwitchCamera.setOnClickListener(this);
+        mImvFlashInActive.setOnClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -68,12 +77,11 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
 
     }
 
-    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+    public Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onPictureTaken(byte[] bytes, Camera camera) {
             File pictureFile = CameraManager.getOutputMediaFile(CameraManager.MEDIA_TYPE_IMAGE);
-
             if (pictureFile == null){
                 Log.d("s", "Error creating media file, check storage permissions: " );
                 return;
@@ -109,7 +117,7 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btCapture:
-                mCamera.takePicture(null, null, mPicture);
+                ((MainActivity)getActivity()).cameraImage(mPicture);
                 break;
             case R.id.ibtSaveImage:
                 imvShowPicture.setVisibility(View.GONE);
@@ -125,32 +133,33 @@ public class FragmentCamera extends Fragment implements View.OnClickListener {
                 ibtDeleteImage.setVisibility(View.GONE);
                 mIMBCaputer.setVisibility(View.VISIBLE);
                 break;
+            case R.id.imvSwitchCamera:
+                ((MainActivity)getActivity()).switchCamera();
+                break;
+            case R.id.imvFlashInActive:
+               switch (k){
+                   case 0:
+                       ((MainActivity)getActivity()).setFlashAuto();
+                       mImvFlashInActive.setImageResource(R.drawable.icflashauto);
+                       k =1;
+                       break;
+                   case 1:
+                       ((MainActivity)getActivity()).setFlashActive();
+                       mImvFlashInActive.setImageResource(R.drawable.icflashactive);
+                       k = 2;
+                       break;
+                   case 2:
+                       ((MainActivity)getActivity()).setFlashInActive();
+                       mImvFlashInActive.setImageResource(R.drawable.icflashinactive);
+                       k = 0;
+                       break;
+               }
+                break;
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser){
-            if (mCamera == null){
-                mCamera = CameraManager.getCameraInstance();
-                mPreview = new CameraPreview(getActivity().getApplicationContext(), mCamera);
-                frameLayout.addView(mPreview);
-            }
-
-        }else {
-            if (mCamera != null) {
-                mCamera.release();
-                mCamera = null;
-                Toast.makeText(getContext(), "release camera", Toast.LENGTH_SHORT).show();
-            }
-
-        }
     }
 }

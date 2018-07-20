@@ -17,10 +17,10 @@ public class CameraManager {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-    public static Camera getCameraInstance(){
+    public static Camera getCameraInstance(int currentCameraId){
         Camera camera = null;
         try {
-            camera = Camera.open();
+            camera = Camera.open(currentCameraId);
         }
         catch (Exception e){
         }

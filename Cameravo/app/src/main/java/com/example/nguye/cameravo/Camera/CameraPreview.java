@@ -2,6 +2,7 @@ package com.example.nguye.cameravo.Camera;
 
 import android.content.Context;
 import android.graphics.Camera;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -39,6 +40,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.stopPreview();
         try {
             mCamera.setPreviewDisplay(mHolder);
+            mCamera.startPreview();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void star(android.hardware.Camera camera){
+        try {
+            camera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,11 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#000000"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcvListImage"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tbGallery"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+        android:background="#ffffff"
+        android:layout_height="wrap_content">
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:text="Gallery"
+            android:textSize="30sp"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_height="wrap_content" />
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:id="@+id/rlG"
+        android:layout_width="match_parent"
+        android:layout_below="@id/tbGallery"
+        android:layout_height="330dp">
+
+        <ImageView
+            android:id="@+id/imvShowImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <VideoView
+            android:id="@+id/vvVideoGallery"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:id="@+id/sbVideoGallery"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:progress="100"
+            android:layout_alignParentBottom="true"
+            android:layout_height="6dp" />
+
+        <ImageView
+            android:id="@+id/imvPlayVideoGallery"
+            android:layout_above="@id/sbVideoGallery"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            android:padding="125dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:background="#ffffff"
+            android:layout_alignParentBottom="true"
+            android:layout_height="2dp" />
+
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/gvListImage"
+        android:numColumns="3"
+        android:layout_below="@id/rlG"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></GridView>
+
+</RelativeLayout>
